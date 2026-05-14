@@ -1,0 +1,35 @@
+name: CI/CD Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v3
+
+      - name: Instalar Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Construir backend
+        run: docker build -t api-service ./api-service
+
+      - name: Construir frontend
+        run: docker build -t web-client ./web-client
+
+      - name: Instalar kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Configurar kubeconfig
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
+          export KUBECONFIG=$PWD/kubeconfig
+
+      - name: Deploy a Kubernetes
+        run: |
+          kubectl apply -f k8s-config/
