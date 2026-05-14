@@ -6,13 +6,13 @@ function App() {
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL)
       .then(res => res.json())
-      .then(data => setMensaje(data.mensaje));
+      .then(data => setMensaje(data.mensaje))
+      .catch(err => console.log(err));
   }, []);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Frontend en Kubernetes 🌐</h1>
-      <h2>{mensaje}</h2>
+    <div>
+      <h1>Frontend 🚀</h1>
     </div>
   );
 }

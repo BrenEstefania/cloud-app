@@ -1,4 +1,4 @@
-name: CI/CD Build
+name: CI/CD Build & Push
 
 on:
   push:
@@ -13,8 +13,17 @@ jobs:
       - name: Descargar código
         uses: actions/checkout@v3
 
+      - name: Login a Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
       - name: Build backend
-        run: docker build -t api-service ./api-service
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/api-service ./api-service
 
       - name: Build frontend
-        run: docker build -t web-client ./web-client
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/web-client ./web-client
+
+      - name: Push backend
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/api-service
+
+      - name: Push frontend
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/web-client
